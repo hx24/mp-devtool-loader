@@ -5,7 +5,6 @@
 export default {
   name: 'wy-mp-devtool',
   created () {
-    alert('组件加载')
     console.log('created')
   }
 }

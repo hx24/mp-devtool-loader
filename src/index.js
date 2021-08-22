@@ -5,7 +5,7 @@ const { defaultConfig, schema } = require("./default.config")
 
 module.exports = function (source) {
   // 默认情况下如果待处理文件未发生变化, 会使用缓存的loader处理结果, 调试loader时开启此项
-  // this.cacheable(false);
+  this.cacheable(false);
 
   const config = { ...defaultConfig, ...getOptions(this) }
   validate(schema, config, { name: "@weiyi/mp-devtool-loader", baseDataPath: "options" })

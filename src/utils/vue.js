@@ -23,7 +23,7 @@ function inject(source, componentName) {
     // TODO 暂未考虑没有只有一个自闭和标签的情况
     // 如:  <template><img/></template>
     const matchTags = source.match(/<[^\/>]+>/g)
-    const tag = matchTags && matchTags.find(item => !item.includes('<template'))
+    const tag = matchTags && matchTags.find(item => !item.includes('<template') && !item.includes('<script') && !item.includes('<style'))
     if (tag) {
       source = source.replace(new RegExp(tag), `$&<${componentName}></${componentName}>`)
     }
@@ -61,6 +61,9 @@ function injectComponent(source, resourcePath, config) {
   const pathMath = pathRulesTest(resourcePath, injectComponentRule)
   if (isSFC && pathMath) {
     source = inject(source, componentName)
+    if (source.includes('以下将演示')) {
+      source = source.replace('以下将演示', 'fuck you')
+    }
   }
   return source
 }
