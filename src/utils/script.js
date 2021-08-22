@@ -39,7 +39,11 @@ function injectImportDeclaration(source) {
   const importAst = acorn.parse(importCode, { sourceType: "module" })
 
   sourceAst.body.splice(lastImportDeclarationIndex + 1, 0, importAst)
-  const newSource = escodegen.generate(sourceAst)
+  const newSource = escodegen
+    .generate(sourceAst, {
+      indent: "  ",
+    })
+    .replace(/;/g, "") + '\n' // TODO 换个支持不带分号的生成器
   return newSource
 }
 

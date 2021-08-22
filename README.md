@@ -18,12 +18,11 @@ npm i @weiyi/mp-devtool-loader --save-dev
 修改 vue.config.js
 
 ```javascript
-const path = require('path')
+const path = require("path")
 const sep = path.sep
 const injectComponentRule = new RegExp(`\\${sep}pages\\${sep}[^\\${sep}]+\\${sep}index\\.vue$`) // 默认匹配 pages/**/index.vue， 待后续优化为支持设置字符串 '/pages/**/index.vue'的格式
 
 // const injectComponentRule = new RegExp(`\\${sep}pages.+\\.vue$`) // 匹配pages下所有vue文件
-
 
 module.exports = {
   chainWebpack: (config) => {
@@ -37,8 +36,25 @@ module.exports = {
       .use("@weiyi/mp-devtool-loader")
       .loader("@weiyi/mp-devtool-loader")
       .options({
-        injectComponentRule
+        injectComponentRule,
       })
   },
+}
+```
+
+#### 配置 uni-app
+
+注册 WyMpDevtool 为全局组件，修改 pages.json
+
+```json
+{
+  // ...
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "wy-mp-devtool": "WyMpDevtool/index.vue"
+    }
+  }
+  // ...
 }
 ```
