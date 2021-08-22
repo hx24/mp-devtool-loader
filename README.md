@@ -18,19 +18,26 @@ npm i @weiyi/mp-devtool-loader --save-dev
 修改 vue.config.js
 
 ```javascript
+const path = require('path')
+const sep = path.sep
+const injectComponentRule = new RegExp(`\\${sep}pages\\${sep}[^\\${sep}]+\\${sep}index\\.vue$`) // 默认匹配 pages/**/index.vue， 待后续优化为支持设置字符串 '/pages/**/index.vue'的格式
+
+// const injectComponentRule = new RegExp(`\\${sep}pages.+\\.vue$`) // 匹配pages下所有vue文件
+
+
 module.exports = {
-  // ...
   chainWebpack: (config) => {
+    // ...
     config.module
       .rule("mp-devtool") // 链式操作用来分组的名字
       .test(/\.(vue)|(js)$/)
+      .pre()
       .exclude.add(/node_modules/)
       .end()
       .use("@weiyi/mp-devtool-loader")
       .loader("@weiyi/mp-devtool-loader")
       .options({
-        component: "",
-        componentName: "",
+        injectComponentRule
       })
   },
 }

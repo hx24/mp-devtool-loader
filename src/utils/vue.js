@@ -22,7 +22,11 @@ function inject(source, componentName) {
   if (descriptor.template) {
     // TODO 暂未考虑没有只有一个自闭和标签的情况
     // 如:  <template><img/></template>
-    source = source.replace(/<[^\/(template)]+>/, `$&<${componentName}></${componentName}>`)
+    const matchTags = source.match(/<[^\/>]+>/g)
+    const tag = matchTags && matchTags.find(item => !item.includes('<template'))
+    if (tag) {
+      source = source.replace(new RegExp(tag), `$&<${componentName}></${componentName}>`)
+    }
   }
   return source
 }

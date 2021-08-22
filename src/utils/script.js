@@ -24,9 +24,8 @@ function copyJsFiles(jsPaths) {
   // }
 }
 
-
 function injectImportDeclaration(source) {
-  const sourceAst = acorn.parse(source, { sourceType: "module" })
+  const sourceAst = acorn.parse(source, { sourceType: "module", ecmaVersion: 2020 })
   let lastNode = null
   estraverse.traverse(sourceAst, {
     leave: function (node, parent) {

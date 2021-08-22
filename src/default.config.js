@@ -1,4 +1,7 @@
 const path = require("path")
+
+const sep = path.sep
+const injectComponentRule = new RegExp(`\\${sep}pages\\${sep}[^\\${sep}]+\\${sep}index\\.vue$`)
 const componentPath = path.resolve(__dirname, "./DevTool/WyMpDevtool")
 const injectJsEntry = path.resolve("./src/main.js")
 const injectJsPath = path.resolve(__dirname, "./DevTool/injectJs/index.js")
@@ -49,7 +52,7 @@ const defaultConfig = {
   componentPath,
   componentName: "wy-mp-devtool",
   // TODO 正则不配置 修改为支持直接设置 /pages/**/index.vue的格式.并支持数组
-  injectComponentRule: /\\pages\\[^\\]+\\index\.vue$/, // 默认匹配 pages/**/index.vue
+  injectComponentRule, // 默认匹配 pages/**/index.vue
   injectJsEntry,
   injectJsPath: injectJsPath,
 }
