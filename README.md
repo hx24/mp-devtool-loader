@@ -2,7 +2,7 @@
 
 > 小程序调试工具
 
-![埋点查看](https://qnm.hunliji.com/FvTOoeoGx55KcFPZSuWFvy31TWhz?imageView2/2/w/400)
+![埋点查看](https://qnm.hunliji.com/lhRqB54AAN3LCrC0rqBw3cPtpvAP)
 
 ## 使用方式
 
