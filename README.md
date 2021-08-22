@@ -2,6 +2,8 @@
 
 > 小程序调试工具
 
+![埋点查看](https://qnm.hunliji.com/FvTOoeoGx55KcFPZSuWFvy31TWhz?imageView2/2/w/400)
+
 ## 使用方式
 
 #### 安装依赖
