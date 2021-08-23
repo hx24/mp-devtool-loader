@@ -7,6 +7,11 @@
   "keywords": [],
   "author": "huangixn1",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git@git.guahao-inc.com:package/mp-devtool-loader.git"
+  },
+  "homepage": "https://git.guahao-inc.com/package/mp-devtool-loader",
   "dependencies": {
     "@vue/compiler-sfc": "^3.2.4",
     "acorn": "^8.4.1",
