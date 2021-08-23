@@ -34,8 +34,11 @@ export default {
   },
   methods: {
     handleDevIconClick () {
-      this.menusVisible = !this.menusVisible
-      this.currentMenuKey = ''
+      if (this.currentMenuKey) {
+        this.currentMenuKey = ''
+      } else {
+        this.menusVisible = !this.menusVisible
+      }
     },
     handleMenuClick (key) {
       if (key === 'close') {
@@ -65,17 +68,11 @@ export default {
   right: 10px;
 }
 .dev-icon {
-  /* position: fixed;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 100%;
+  height: 100%;
   display: flex;
-  align-items: center;
   justify-content: center;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.3);
-  bottom: 100px;
-  right: 10px; */
+  align-items: center;
 }
 .menus-container {
   position: absolute;
