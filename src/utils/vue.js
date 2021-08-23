@@ -33,7 +33,7 @@ function inject(source, componentName) {
           !item.includes("<!") // 注释也是标签
       )
     if (tag) {
-      source = source.replace(new RegExp(tag), `$&<${componentName}></${componentName}>`)
+      source = source.replace(tag, `$&<${componentName}></${componentName}>`)
     }
   }
   return source
