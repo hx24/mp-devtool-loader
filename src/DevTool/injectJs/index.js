@@ -40,6 +40,9 @@ class Recorder {
       const records = this.getAll()
       const record = this.formatRequest(options)
       records.unshift(record)
+      if (records.length > 200) {
+        records.splice(200) // 最多保留两百条数据
+      }
       wx.setStorageSync(STORAGE_KEY, JSON.stringify(records))
       this.bus.$emit('update', records)
       return record.id
