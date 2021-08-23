@@ -12,7 +12,7 @@ function pathRulesTest(target, rules) {
   if (regPass) return true
 
   const pagePaths = formatPageJson(pagesJsonPath) || []
-  if (pagePaths.find(pagePath => new RegExp(pagePath, 'i').test(target))) return true
+  if (pagePaths.find((pagePath) => new RegExp(pagePath, "i").test(target))) return true
 
   return false
 }
@@ -36,17 +36,21 @@ const formatPageJson = (function () {
    * @returns string[]
    */
   return function formatPageJson(pagesJsonPath) {
-    if(allPagePaths?.length) return allPagePaths
+    if (allPagePaths && allPagePaths.length) return allPagePaths
     if (!pagesJsonPath) return allPagePaths
     try {
       const pageJson = require(pagesJsonPath)
       const { pages, subpackages } = pageJson || {}
       pages.map((page) => allPagePaths.push(replacePathSep(page.path)))
 
-      subpackages?.forEach((subPackage) => {
-        const { root, pages: subPages } = subPackage
-        subPages?.forEach((subPage) => allPagePaths.push(replacePathSep(root + "/" + subPage.path)))
-      })
+      if (subpackages && subpackages.length) {
+        subpackages.forEach((subPackage) => {
+          const { root, pages: subPages } = subPackage
+          ;(subPages || []).forEach((subPage) =>
+            allPagePaths.push(replacePathSep(root + "/" + subPage.path))
+          )
+        })
+      }
     } catch (error) {
       console.error("wy-mp-devtool: 解析page.json错误", error)
     }
@@ -56,7 +60,7 @@ const formatPageJson = (function () {
 })()
 
 function replacePathSep(_path) {
-  return (_path || "").replace(/\//g, path.sep) + '.vue'
+  return (_path || "").replace(/\//g, path.sep) + ".vue"
 }
 
 module.exports = {
