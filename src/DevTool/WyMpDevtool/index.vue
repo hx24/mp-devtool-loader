@@ -1,19 +1,20 @@
 <template>
-  <div class="container">
-    <div class="dev-icon" v-if="devIconVisible" @click="handleDevIconClick">W</div>
+  <div class="container" v-if="devIconVisible">
+    <div class="dev-icon" @click="handleDevIconClick">W</div>
     <div class="menus-container" :class="{ 'menus-container-show': menusVisible }">
       <ul class="menus">
-        <li class="menu-item" @click="handleMenuClick(item.name)" v-for="item in menus" :key="item.name">
+        <li class="menu-item" @click="handleMenuClick(item.key)" v-for="item in menus" :key="item.key">
           <img class="menu-img" :src="item.icon" />
-          <span class="menu-name">{{item.name}}</span>
+          <span class="menu-name">{{ item.name }}</span>
         </li>
       </ul>
     </div>
-    <sider :name.sync="currentMenuName"></sider>
+    <sider :menu-key.sync="currentMenuKey"></sider>
   </div>
 </template>
 <script>
 import Sider from './components/Sider.vue'
+import menus from './menus'
 
 export default {
   name: 'wy-mp-devtool',
@@ -22,19 +23,11 @@ export default {
   },
   data () {
     return {
-      menus: [
-        {
-          icon: 'https://kano.guahao.cn/eSd542406321',
-          name: 'monitor'
-        }
-      ],
-      currentMenuName: '',
+      menus: menus,
+      currentMenuKey: '',
       devIconVisible: true,
       menusVisible: false
     }
-  },
-  created () {
-    console.log('created')
   },
   watch: {
     menusVisible () {}
@@ -42,10 +35,15 @@ export default {
   methods: {
     handleDevIconClick () {
       this.menusVisible = !this.menusVisible
-      this.currentMenuName = ''
+      this.currentMenuKey = ''
     },
-    handleMenuClick (name) {
-      this.currentMenuName = name
+    handleMenuClick (key) {
+      if (key === 'close') {
+        this.menusVisible = false
+        this.devIconVisible = false
+        return
+      }
+      this.currentMenuKey = key
       this.menusVisible = false
     }
   }

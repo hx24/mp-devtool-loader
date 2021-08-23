@@ -1,14 +1,14 @@
 <template>
   <section class="component-mp-devtool-monitor">
     <div class="action">
-      <button class="delete" @click="handleDelete">x</button>
+      <button class="delete" @click="handleDelete">×</button>
       <input v-model="keyword" class="filter-input" type="text" placeholder="过滤" />
       <checkbox-group @change="checkboxChange">
-        <label><checkbox value="filterPageMonitor" :checked="filterPageMonitor" style="transform: scale(0.7);" />过滤PV</label>
+        <label><checkbox value="filterPageMonitor" :checked="filterPageMonitor" class="filter-pv-checkbox" />过滤PV</label>
       </checkbox-group>
     </div>
-    <scroll-view scroll-y class="monitor-list">
-      <li class="monitor-card" v-for="monitor in filteredMonitors" :key="monitor.id">
+    <ul scroll-y class="monitor-list">
+      <li class="monitor-card" v-for="(monitor, index) in filteredMonitors" :key="monitor.id" @longpress="handleCardLongpress(index)">
         <div class="time">{{ monitor.time }}</div>
         <template v-if="monitor.isPageMonitor">
           <div class="card-row">
@@ -48,7 +48,7 @@
           </template>
         </template>
       </li>
-    </scroll-view>
+    </ul>
   </section>
 </template>
 
@@ -80,6 +80,11 @@ export default {
     },
     checkboxChange (e) {
       this.filterPageMonitor = !!e.detail.value.length
+    },
+    handleCardLongpress (monitorIndex) {
+      uni.setClipboardData({
+        data: JSON.stringify(this.filteredMonitors[monitorIndex])
+      })
     }
   },
   computed: {
@@ -111,16 +116,16 @@ export default {
 .component-mp-devtool-monitor {
   color: #232833;
   font-size: 12px;
+  position: relative;
 }
 
 .action {
   display: flex;
   padding: 10px;
-  padding-bottom: 0;
-}
-
-.filter-pv-label {
-  font-size: 12px;
+  position: sticky;
+  top: -1px;
+  background: #fff;
+  z-index: 10;
 }
 
 .delete {
@@ -143,11 +148,16 @@ export default {
   padding-left: 10px;
 }
 
+.filter-pv-checkbox {
+  transform: scale(0.7);
+}
+
 .monitor-list {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding-bottom: 30px;
 }
 
 .monitor-card {
@@ -158,8 +168,10 @@ export default {
   border-radius: 6px;
   position: relative;
   margin: 10px;
+  margin-top: 0;
   padding-top: 20px;
 }
+
 .time {
   position: absolute;
   top: 5px;

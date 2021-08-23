@@ -1,9 +1,11 @@
 const path = require("path")
 
-const sep = path.sep
-const injectComponentRule = new RegExp(`\\${sep}pages\\${sep}[^\\${sep}]+\\${sep}index\\.vue$`)
+// const sep = path.sep
+// const defaultInjectComponentRules = new RegExp(`\\${sep}pages\\${sep}[^\\${sep}]+\\${sep}index\\.vue$`) // 默认插入到
+const injectComponentRule = []
 const componentPath = path.resolve(__dirname, "./DevTool/WyMpDevtool")
 const injectJsEntry = path.resolve("./src/main.js")
+const pagesJsonPath = path.resolve("./src/pages.json")
 const injectJsPath = path.resolve(__dirname, "./DevTool/injectJs/index.js")
 
 const schema = {
@@ -29,6 +31,10 @@ const schema = {
         },
       ],
     },
+    pagesJsonPath: {
+      description: 'page.json路径, 默认为src/json',
+      type: 'string'
+    },
     injectJsEntry: {
       description: "要注入js的入口文件路径, 绝对路径",
       type: "string",
@@ -53,6 +59,7 @@ const defaultConfig = {
   componentName: "wy-mp-devtool",
   // TODO 正则不配置 修改为支持直接设置 /pages/**/index.vue的格式.并支持数组
   injectComponentRule, // 默认匹配 pages/**/index.vue
+  pagesJsonPath,
   injectJsEntry,
   injectJsPath: injectJsPath,
 }

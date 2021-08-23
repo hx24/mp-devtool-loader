@@ -1,6 +1,6 @@
 {
   "name": "@weiyi/mp-devtool-loader",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "小程序调试插件",
   "main": "src/index.js",
   "scripts": {},

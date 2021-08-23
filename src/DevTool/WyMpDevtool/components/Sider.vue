@@ -1,25 +1,29 @@
 <template>
-  <section class="component-mp-devtool-sider" :class="{ 'dev-tool-show': name }">
+  <section class="component-mp-devtool-sider" :class="{ 'dev-tool-show': menuKey }">
     <div class="header">
-      <div class="title">埋点查看</div>
-      <span class="close" @click="handleClose">x</span>
+      <div class="title">{{ title }}</div>
+      <span class="close" @click="handleClose">×</span>
     </div>
     <div class="main">
-      <monitor v-if="name === 'monitor'"></monitor>
+      <monitor v-if="menuKey === 'monitor'"></monitor>
+      <page-info v-if="menuKey === 'pageInfo'"></page-info>
     </div>
   </section>
 </template>
 
 <script>
 import Monitor from './Monitor'
+import PageInfo from './PageInfo'
+import menus from '../menus'
 
 export default {
   name: 'mp-devtool-sider',
   components: {
-    Monitor
+    Monitor,
+    PageInfo
   },
   props: {
-    name: String
+    menuKey: String
   },
   data () {
     return {
@@ -30,10 +34,20 @@ export default {
   created () {},
   methods: {
     handleClose () {
-      this.$emit('update:name', '')
+      this.$emit('update:menuKey', '')
     }
   },
-  computed: {}
+  computed: {
+    menusMap () {
+      return menus.reduce((res, menu) => {
+        res[menu.key] = menu
+        return res
+      }, {})
+    },
+    title () {
+      return this.menusMap[this.menuKey]?.name
+    }
+  }
 }
 </script>
 
@@ -68,8 +82,12 @@ export default {
 }
 .close {
   position: absolute;
-  right: 15px;
+  right: 5px;
   font-size: 20px;
+  width: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .main {
   overflow: auto;

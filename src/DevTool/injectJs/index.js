@@ -30,7 +30,7 @@ class Recorder {
   constructor () {
     const { currentSize, limitSize } = wx.getStorageInfoSync()
     if (currentSize > limitSize * 0.9) {
-      this.clear()
+      this.clearHalf()
     }
     this.bus = new Vue()
   }
@@ -59,11 +59,13 @@ class Recorder {
   }
 
   getTime () {
-    const fix = (num) => {
+    const fix = num => {
       return num < 10 ? '0' + num : num
     }
     const date = new Date()
-    const time = `${fix(date.getHours())}:${fix(date.getMinutes())}:${fix(date.getSeconds())}`
+    const time = `${fix(date.getHours())}:${fix(date.getMinutes())}:${fix(
+      date.getSeconds()
+    )}`
     return time
   }
 
@@ -74,7 +76,6 @@ class Recorder {
 
     const reqDataType = typeof data
     if (data && reqDataType !== 'string' && reqDataType !== 'object') {
-      console.log('', typeof data, data)
       data = '非文本或json'
     }
 
@@ -92,6 +93,14 @@ class Recorder {
   clear () {
     this.bus.$emit('update', [])
     wx.removeStorageSync(STORAGE_KEY)
+  }
+
+  clearHalf () {
+    const records = this.getAll()
+    // 删除一半数据
+    records.splice(records.length / 2)
+    wx.setStorageSync(STORAGE_KEY, JSON.stringify(records))
+    this.bus.$emit('update', records)
   }
 
   update (id) {
