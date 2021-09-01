@@ -9,18 +9,18 @@ const packageName = "wyMpDevtoolInit"
 
 /**
  * 拷贝js文件到node_modules下
- * @param {string | string[]} jsPaths 待拷贝js文件路径
+ * @param {string | string[]} jsPath 待拷贝js文件路径
  * @param {string} target
  */
-function copyJsFiles(jsPaths) {
+function copyJsFiles(jsPath) {
   // TODO 暂时只考虑单文件插入
-  copyDirOnceSync(jsPaths, path.resolve(`./node_modules/${packageName}`))
+  copyDirOnceSync(jsPath, path.resolve(`./node_modules/${packageName}`))
 
-  // if (typeof jsPaths === 'string') {
-  //   copyDirOnceSync(jsPaths, path.resolve(`./node_modules/${packageName}`))
-  // } else if (Array.isArray(jsPaths)) {
+  // if (typeof jsPath === 'string') {
+  //   copyDirOnceSync(jsPath, path.resolve(`./node_modules/${packageName}`))
+  // } else if (Array.isArray(jsPath)) {
   //   // TODO 多个文件时这样直接拷贝有问题，全都拷贝到了同一目录下，若文件相互依赖会发生错误
-  //   jsPaths.forEach(path => copyJsFiles(path))
+  //   jsPath.forEach(path => copyJsFiles(path))
   // }
 }
 

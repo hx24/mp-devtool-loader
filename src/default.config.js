@@ -6,7 +6,7 @@ const injectComponentRule = []
 const componentPath = path.resolve(__dirname, "./DevTool/WyMpDevtool")
 const injectJsEntry = path.resolve("./src/main.js")
 const pagesJsonPath = path.resolve("./src/pages.json")
-const injectJsPath = path.resolve(__dirname, "./DevTool/injectJs/index.js")
+const injectJsPath = path.resolve(__dirname, "./DevTool/injectJs")
 
 const schema = {
   type: "object",
@@ -61,7 +61,7 @@ const defaultConfig = {
   injectComponentRule, // 默认匹配 pages/**/index.vue
   pagesJsonPath,
   injectJsEntry,
-  injectJsPath: injectJsPath,
+  injectJsPath,
 }
 
 module.exports = {

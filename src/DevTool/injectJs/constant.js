@@ -1,0 +1,1 @@
+export const STORAGE_KEY = 'wy_mp_devtool_requests'
