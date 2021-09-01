@@ -12,7 +12,7 @@ function pathRulesTest(target, rules) {
   if (regPass) return true
 
   const pagePaths = formatPageJson(pagesJsonPath) || []
-  if (pagePaths.find((pagePath) => new RegExp(pagePath, "i").test(target))) return true
+  if (pagePaths.find((pagePath) => target.includes(pagePath))) return true
 
   return false
 }
