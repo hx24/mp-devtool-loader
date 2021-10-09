@@ -1,53 +1,52 @@
 <template>
   <div class="container" v-if="devIconVisible">
-    <div class="dev-icon" @click="handleDevIconClick">W</div>
-    <div class="menus-container" :class="{ 'menus-container-show': menusVisible }">
-      <ul class="menus">
-        <li class="menu-item" @click="handleMenuClick(item.key)" v-for="item in menus" :key="item.key">
-          <img class="menu-img" :src="item.icon" />
-          <span class="menu-name">{{ item.name }}</span>
-        </li>
-      </ul>
-    </div>
+    <div class="dev-icon" @click="showPopup = true">W</div>
+    <wy-devtool-popup v-model="showPopup">
+      <div class="wy-mp-devtool__wrapper">
+        <div class="menus__container">
+          <ul class="menus">
+            <li
+              v-for="menu in menus"
+              :key="menu.key"
+              :class="['meun-item', { actived: menu.key === curMenu.key }]"
+              @click="handleMenuClick(menu)"
+            >{{ menu.key }}</li>
+          </ul>
+        </div>
+        <div class="main__container">
+          <monitor v-if="curMenu.key === 'Monitor'"></monitor>
+          <page-info v-else-if="curMenu.key === 'Page'"></page-info>
+        </div>
+      </div>
+    </wy-devtool-popup>
     <sider :menu-key.sync="currentMenuKey"></sider>
   </div>
 </template>
 <script>
-import Sider from './components/Sider.vue'
-import menus from './menus'
+import WyDevtoolPopup from './ui/wy-devtool-popup.vue'
+import Monitor from './components/Monitor.vue'
+import PageInfo from './components/PageInfo.vue'
+
+import menus from './menus.js'
 
 export default {
   name: 'wy-mp-devtool',
   components: {
-    Sider
+    WyDevtoolPopup,
+    Monitor,
+    PageInfo
   },
   data () {
     return {
       menus: menus,
-      currentMenuKey: '',
+      showPopup: false,
+      curMenu: menus[0] || {},
       devIconVisible: true,
-      menusVisible: false
     }
   },
-  watch: {
-    menusVisible () {}
-  },
   methods: {
-    handleDevIconClick () {
-      if (this.currentMenuKey) {
-        this.currentMenuKey = ''
-      } else {
-        this.menusVisible = !this.menusVisible
-      }
-    },
-    handleMenuClick (key) {
-      if (key === 'close') {
-        this.menusVisible = false
-        this.devIconVisible = false
-        return
-      }
-      this.currentMenuKey = key
-      this.menusVisible = false
+    handleMenuClick (menu = {}) {
+      this.curMenu = menu
     }
   }
 }
@@ -64,7 +63,7 @@ export default {
   justify-content: center;
   color: #fff;
   background: rgba(0, 0, 0, 0.3);
-  bottom: 100px;
+  bottom: 200px;
   right: 10px;
 }
 .dev-icon {
@@ -74,50 +73,32 @@ export default {
   justify-content: center;
   align-items: center;
 }
-.menus-container {
-  position: absolute;
-  right: -100%;
-  width: 0;
-  height: 0;
-  opacity: 0;
-
-  /* transition: all 0.3s ease 0s; */
-  transition: width, height, opacity 0.3s ease 0s;
+.wy-mp-devtool__wrapper {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  border-radius: 20px;
-}
-.menus-container-show {
-  width: 300px;
-  height: 300px;
-  opacity: 1;
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 999999;
+  flex-direction: column;
+  color: #000;
+  font-size: 14px;
+  height: 100%;
+  overflow: hidden;
 }
 .menus {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-}
-.menu-img {
-  width: 35px;
-  height: 35px;
-}
-.menu-item {
   display: flex;
-  justify-content: space-evenly;
   align-items: center;
-  white-space: nowrap;
-  flex-direction: column;
+  border-bottom: 1px solid #e4e7ed;
+}
+.meun-item {
+  height: 35px;
+  line-height: 35px;
+  padding: 0 5px;
+  border-right: 1px solid #e4e7ed;
+  list-style: none;
+  background: #f5f7fa;
+}
+.meun-item.actived {
+  background: #fff;
+}
+.main__container {
+  flex: 1;
   overflow: hidden;
-  font-size: 14px;
 }
 </style>
