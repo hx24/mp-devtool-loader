@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-if="devIconVisible">
+  <div class="container">
     <div class="dev-icon" @click="showPopup = true">W</div>
     <wy-devtool-popup v-model="showPopup">
       <div class="wy-mp-devtool__wrapper">
@@ -14,12 +14,11 @@
           </ul>
         </div>
         <div class="main__container">
-          <monitor v-if="curMenu.key === 'Monitor'"></monitor>
-          <page-info v-else-if="curMenu.key === 'Page'"></page-info>
+          <monitor v-show="curMenu.key === 'Monitor'"></monitor>
+          <page-info v-show="curMenu.key === 'Page'"></page-info>
         </div>
       </div>
     </wy-devtool-popup>
-    <sider :menu-key.sync="currentMenuKey"></sider>
   </div>
 </template>
 <script>
@@ -40,8 +39,7 @@ export default {
     return {
       menus: menus,
       showPopup: false,
-      curMenu: menus[0] || {},
-      devIconVisible: true,
+      curMenu: menus[0] || {}
     }
   },
   methods: {
