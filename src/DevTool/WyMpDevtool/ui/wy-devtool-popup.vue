@@ -44,7 +44,7 @@ export default {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.6);
-  z-index: 300;
+  z-index: 9999;
   opacity: 0;
   transform: translateY(100%);
   transition: opacity 0.3s;
@@ -55,7 +55,7 @@ export default {
   right: 0;
   top: 0;
   bottom: 0;
-  z-index: 301;
+  z-index: 99999;
   max-width: 100%;
   max-height: 100%;
   box-sizing: border-box;

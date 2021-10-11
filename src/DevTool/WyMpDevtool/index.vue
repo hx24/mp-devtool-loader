@@ -1,6 +1,14 @@
 <template>
   <div class="container">
-    <div class="dev-icon" @click="showPopup = true">W</div>
+    <div
+      class="dev-icon"
+      :style="{'transform':`translate(${drag.x}px, ${drag.y}px)`}"
+      @touchstart="e => drag.start(e)"
+      @touchmove.stop.prevent="e => drag.move(e)"
+      @touchend="e => drag.end(e)"
+      @click="showPopup = !showPopup"
+    >W</div>
+
     <wy-devtool-popup v-model="showPopup">
       <div class="wy-mp-devtool__wrapper">
         <div class="menus__container">
@@ -22,11 +30,12 @@
   </div>
 </template>
 <script>
+import menus from './menus.js'
+import { ElDrag } from './util/index.js'
+
 import WyDevtoolPopup from './ui/wy-devtool-popup.vue'
 import Monitor from './components/Monitor.vue'
 import PageInfo from './components/PageInfo.vue'
-
-import menus from './menus.js'
 
 export default {
   name: 'wy-mp-devtool',
@@ -39,7 +48,8 @@ export default {
     return {
       menus: menus,
       showPopup: false,
-      curMenu: menus[0] || {}
+      curMenu: menus[0] || {},
+      drag: new ElDrag(),
     }
   },
   methods: {
@@ -50,9 +60,11 @@ export default {
 }
 </script>
 <style scoped>
-.container {
-  z-index: 99999;
+.dev-icon {
   position: fixed;
+  bottom: 200px;
+  right: 10px;
+  z-index: 9999;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -61,15 +73,7 @@ export default {
   justify-content: center;
   color: #fff;
   background: rgba(0, 0, 0, 0.3);
-  bottom: 200px;
-  right: 10px;
-}
-.dev-icon {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  user-select: none;
 }
 .wy-mp-devtool__wrapper {
   display: flex;
