@@ -1,24 +1,23 @@
 <template>
   <div class="container">
-    <div
+    <view
+      id="menu"
       class="dev-icon"
-      :style="{'transform':`translate(${drag.x}px, ${drag.y}px)`}"
-      @touchstart="e => drag.start(e)"
-      @touchmove.stop.prevent="e => drag.move(e)"
-      @touchend="e => drag.end(e)"
+      ref="myMenu"
+      :style="{ transform: `translate(${drag.x || 0}px, ${drag.y || 0}px)` }"
+      @touchstart="(e) => drag.start(e)"
+      @touchmove.stop.prevent="(e) => drag.move(e)"
+      @touchend="(e) => drag.end(e)"
       @click="showPopup = !showPopup"
-    >W</div>
+    >
+      W
+    </view>
 
     <wy-devtool-popup v-model="showPopup">
       <div class="wy-mp-devtool__wrapper">
         <div class="menus__container">
           <ul class="menus">
-            <li
-              v-for="menu in menus"
-              :key="menu.key"
-              :class="['meun-item', { actived: menu.key === curMenu.key }]"
-              @click="handleMenuClick(menu)"
-            >{{ menu.key }}</li>
+            <li v-for="menu in menus" :key="menu.key" :class="['meun-item', { actived: menu.key === curMenu.key }]" @click="handleMenuClick(menu)">{{ menu.key }}</li>
           </ul>
         </div>
         <div class="main__container">
@@ -49,21 +48,26 @@ export default {
       menus: menus,
       showPopup: false,
       curMenu: menus[0] || {},
-      drag: new ElDrag(),
+      drag: {}
     }
   },
   methods: {
     handleMenuClick (menu = {}) {
       this.curMenu = menu
     }
+  },
+  mounted () {
+    const query = uni.createSelectorQuery().in(this)
+    const menuRef = query.select('#menu')
+    this.drag = new ElDrag(menuRef)
   }
 }
 </script>
 <style scoped>
 .dev-icon {
   position: fixed;
-  bottom: 200px;
-  right: 10px;
+  top: 160px;
+  left: 0px;
   z-index: 9999;
   width: 40px;
   height: 40px;

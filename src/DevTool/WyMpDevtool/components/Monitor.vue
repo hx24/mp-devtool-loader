@@ -58,36 +58,36 @@ export default {
   name: 'mp-devtool-monitor',
   components: {},
   props: {},
-  data() {
+  data () {
     return {
       records: this.$recorder.getAll(),
       keyword: '',
       filterPageMonitor: true
     }
   },
-  created() {
+  created () {
     this.$recorder.bus.$on('update', (records) => {
       this.records = records
     })
   },
   methods: {
-    handleDelete() {
+    handleDelete () {
       this.$recorder.clear()
     },
-    isString(v) {
+    isString (v) {
       return typeof v === 'string'
     },
-    checkboxChange(e) {
+    checkboxChange (e) {
       this.filterPageMonitor = !!e.detail.value.length
     },
-    handleCardLongpress(monitorIndex) {
+    handleCardLongpress (monitorIndex) {
       uni.setClipboardData({
         data: JSON.stringify(this.filteredMonitors[monitorIndex])
       })
     }
   },
   computed: {
-    monitors() {
+    monitors () {
       const records = this.records.reduce((res, record) => {
         const monitor = formatMonitor(record)
         monitor && res.push(monitor)
@@ -95,7 +95,7 @@ export default {
       }, [])
       return records
     },
-    filteredMonitors() {
+    filteredMonitors () {
       const { keyword, filterPageMonitor } = this
       let { monitors } = this
 

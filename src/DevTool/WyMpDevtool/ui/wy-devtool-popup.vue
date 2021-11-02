@@ -1,5 +1,5 @@
 <template>
-  <div :class="['wy-devtool-popup', {show: value}]">
+  <div :class="['wy-devtool-popup', { show: value }]">
     <div class="wy-devtool-popup__mask" @click="handleClose"></div>
     <div :class="['wy-devtool-popup__container', position]" :style="{ height: height }">
       <slot></slot>
@@ -59,7 +59,7 @@ export default {
   max-width: 100%;
   max-height: 100%;
   box-sizing: border-box;
-  background: #FFFFFF;
+  background: #fff;
   transform: translateY(100%);
   transition: transform 0.3s ease;
 }
