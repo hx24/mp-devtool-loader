@@ -56,10 +56,13 @@ export default {
       this.curMenu = menu
     }
   },
-  mounted () {
+  created () {
     const query = uni.createSelectorQuery().in(this)
     const menuRef = query.select('#menu')
     this.drag = new ElDrag(menuRef)
+  },
+  destroyed () {
+    this.drag.destroy()
   }
 }
 </script>

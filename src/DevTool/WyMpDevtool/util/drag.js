@@ -6,8 +6,14 @@
     @touchend="e => drag.end(e)"
  */
 
+const STORAGE_POSITION_KEY = 'wy_mp_devtool_icon_position'
+
+const iDrags = [] // 缓存ElDrag实例, 在一个实例更新位置后，通知其他实例更新
+
 export class ElDrag {
   constructor (menuRef) {
+    iDrags.push(this)
+
     // this.menuRef = menuRef 会报错
     Object.defineProperty(this, 'menuRef', {
       value: menuRef,
@@ -29,9 +35,10 @@ export class ElDrag {
       }
     })
 
+    const { x, y } = wx.getStorageSync(STORAGE_POSITION_KEY) || {}
     // 偏移距离
-    this.x = 0
-    this.y = 0
+    this.x = x || 0
+    this.y = y || 0
 
     // 当前坐标
     this.curPoint = {
@@ -70,6 +77,10 @@ export class ElDrag {
     this.y = diffPoint.y + this.curPoint.y
   }
 
+  end (ev) {
+    this.moveToSide()
+  }
+
   /**
    * 获取当前拖拽元素的信息
    * @returns {Promise<Object>}
@@ -82,10 +93,6 @@ export class ElDrag {
         })
         .exec()
     })
-  }
-
-  end (ev) {
-    this.moveToSide()
   }
 
   /**
@@ -111,5 +118,22 @@ export class ElDrag {
       // 移动到下边界
       this.y += (windowHeight - top - height)
     }
+
+    wx.setStorageSync(STORAGE_POSITION_KEY, { x: this.x, y: this.y })
+
+    iDrags.forEach(iDrag => {
+      if (iDrag !== this) {
+        iDrag.x = this.x
+        iDrag.y = this.y
+      }
+    })
+  }
+
+  /**
+   * 移除缓存的实例，防止内存泄漏
+   */
+  destroy () {
+    const i = iDrags.indexOf(this)
+    iDrags.splice(i, 1)
   }
 }
