@@ -26,7 +26,7 @@
             <template v-else>pending</template>
           </div>
         </div>
-        <div class="network-row-detail" v-if="record.expose" v-html="syntaxHighlightDetail(record.id)" @longpress="copyDetail(record.id)"></div>
+        <div class="network-row-detail" v-if="exposeData[record.id]" v-html="syntaxHighlightDetail(record.id)" @longpress="copyDetail(record.id)"></div>
       </li>
     </ul>
   </section>
@@ -42,7 +42,8 @@ export default {
       records: this.$recorder.getAll(),
       keyword: '',
       details: {},
-      filterMonitor: true
+      filterMonitor: true,
+      exposeData: {}
     }
   },
   created () {
@@ -66,9 +67,10 @@ export default {
       })
     },
     toggleRecordDetail (record) {
-      const { id, expose } = record
-      record.expose = !expose
-      if (!expose) {
+      const { exposeData } = this
+      const { id } = record
+      exposeData[id] = !exposeData[id]
+      if (exposeData[id]) {
         const response = this.$recorder.getResponse(id)
         this.details[id] = {
           request: record,
