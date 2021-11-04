@@ -1,26 +1,38 @@
 import Vue from 'vue'
-import { STORAGE_KEY } from './constant'
+import { REQUESTS_STORAGE_KEY, RESPONSES_STORAGE_KEY } from './constant'
 
 export default class Recorder {
   constructor () {
-    const { currentSize, limitSize } = wx.getStorageInfoSync()
-    if (currentSize > limitSize * 0.9) {
-      this.clearHalf()
-    }
+    this.checkStorageSize()
     this.bus = new Vue()
   }
 
-  add (options) {
+  addRecord (options) {
     try {
       const records = this.getAll()
       const record = this.formatRequest(options)
       records.unshift(record)
-      if (records.length > 200) {
-        records.splice(200) // 最多保留两百条数据
-      }
-      wx.setStorageSync(STORAGE_KEY, JSON.stringify(records))
+      // if (records.length > 100) {
+      //   records.splice(100) // 最多保留100数据
+      // }
+      wx.setStorageSync(REQUESTS_STORAGE_KEY, records)
       this.bus.$emit('update', records)
       return record.id
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  updateRecord (id, options) {
+    try {
+      const records = this.getAll()
+      const record = records.find(record => record.id === id)
+      if (record) {
+        Object.assign(record, options)
+        wx.setStorageSync(REQUESTS_STORAGE_KEY, records)
+        this.bus.$emit('update', records)
+      }
+      console.log('update', options)
     } catch (error) {
       console.error(error)
     }
@@ -29,29 +41,20 @@ export default class Recorder {
   getAll () {
     let records = []
     try {
-      records = JSON.parse(wx.getStorageSync(STORAGE_KEY) || '[]')
+      records = wx.getStorageSync(REQUESTS_STORAGE_KEY) || []
+      if (typeof records === 'string') {
+        // 兼容遗留问题
+        records = JSON.parse(records)
+      }
     } catch (error) {
       console.error(error)
     }
     return records
   }
 
-  getTime () {
-    const fix = num => {
-      return num < 10 ? '0' + num : num
-    }
-    const date = new Date()
-    const time = `${fix(date.getHours())}:${fix(date.getMinutes())}:${fix(
-      date.getSeconds()
-    )}`
-    return time
-  }
-
   formatRequest (options) {
     let { url, data, header, method, dataType } = options
-    const time = this.getTime()
     const id = Date.now()
-
     const reqDataType = typeof data
     if (data && reqDataType !== 'string' && reqDataType !== 'object') {
       data = '非文本或json'
@@ -60,7 +63,6 @@ export default class Recorder {
     return {
       url,
       data,
-      time,
       header,
       method,
       dataType,
@@ -70,18 +72,58 @@ export default class Recorder {
 
   clear () {
     this.bus.$emit('update', [])
-    wx.removeStorageSync(STORAGE_KEY)
+    Recorder.clearStatic()
   }
 
-  clearHalf () {
-    const records = this.getAll()
-    // 删除一半数据
-    records.splice(records.length / 2)
-    wx.setStorageSync(STORAGE_KEY, JSON.stringify(records))
-    this.bus.$emit('update', records)
+  static clearStatic () {
+    wx.removeStorageSync(REQUESTS_STORAGE_KEY)
+    wx.removeStorageSync(RESPONSES_STORAGE_KEY)
   }
 
-  update (id) {
-    // TODO 对request的成功回调进行切片，记录响应值
+  checkStorageSize () {
+    try {
+      const { currentSize, limitSize } = wx.getStorageInfoSync()
+      if (currentSize > limitSize * 0.5) {
+        const records = this.getAll()
+        // 删除一半数据
+        const deletedRecords = records.splice(records.length / 2)
+        const allResponse = wx.getStorageSync(RESPONSES_STORAGE_KEY) || {}
+        deletedRecords.forEach(record => {
+          delete allResponse[record.id]
+        })
+        wx.setStorageSync(REQUESTS_STORAGE_KEY, records)
+        wx.setStorageSync(RESPONSES_STORAGE_KEY, allResponse)
+        this.bus.$emit('update', records)
+      }
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
+  addResponse (id, startTime, res) {
+    // 对request的成功回调进行切片，记录响应值
+    try {
+      const allResponse = wx.getStorageSync(RESPONSES_STORAGE_KEY) || {}
+      const response = JSON.parse(JSON.stringify(res))
+      this.updateRecord(id, {
+        time: +new Date() - startTime,
+        status: response.statusCode
+      })
+      allResponse[id] = response
+      wx.setStorageSync(RESPONSES_STORAGE_KEY, allResponse)
+      this.checkStorageSize()
+    } catch (error) {
+      console.error('格式化响应失败', error)
+    }
+  }
+
+  getResponse (id) {
+    try {
+      const allResponse = wx.getStorageSync(RESPONSES_STORAGE_KEY) || {}
+      return allResponse[id]
+    } catch (error) {
+      console.error('读取相应失败', error)
+      return {}
+    }
   }
 }

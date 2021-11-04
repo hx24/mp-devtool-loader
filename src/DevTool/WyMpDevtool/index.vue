@@ -17,12 +17,14 @@
       <div class="wy-mp-devtool__wrapper">
         <div class="menus__container">
           <ul class="menus">
-            <li v-for="menu in menus" :key="menu.key" :class="['meun-item', { actived: menu.key === curMenu.key }]" @click="handleMenuClick(menu)">{{ menu.key }}</li>
+            <li v-for="menu in menus" :key="menu.key" :class="['meun-item', { actived: menu.key === curMenu.key }]" @click="handleMenuClick(menu)">{{ menu.name }}</li>
           </ul>
         </div>
         <div class="main__container">
           <monitor v-show="curMenu.key === 'Monitor'"></monitor>
           <page-info v-show="curMenu.key === 'Page'"></page-info>
+          <network v-show="curMenu.key === 'Network'"></network>
+          <gateway-tag v-show="curMenu.key === 'GatewayTag'"></gateway-tag>
         </div>
       </div>
     </wy-devtool-popup>
@@ -35,13 +37,17 @@ import { ElDrag } from './util/index.js'
 import WyDevtoolPopup from './ui/wy-devtool-popup.vue'
 import Monitor from './components/Monitor.vue'
 import PageInfo from './components/PageInfo.vue'
+import Network from './components/Network.vue'
+import GatewayTag from './components/GatewayTag.vue'
 
 export default {
   name: 'wy-mp-devtool',
   components: {
     WyDevtoolPopup,
     Monitor,
-    PageInfo
+    PageInfo,
+    Network,
+    GatewayTag
   },
   data () {
     return {
@@ -98,7 +104,7 @@ export default {
 .meun-item {
   height: 35px;
   line-height: 35px;
-  padding: 0 5px;
+  padding: 0 10px;
   border-right: 1px solid #e4e7ed;
   list-style: none;
   background: #f5f7fa;
