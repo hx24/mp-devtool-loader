@@ -37,7 +37,7 @@ const { BUILD_TYPE = '' } = process.env
 module.exports = {
   chainWebpack: (config) => {
     // ...
-    if (['平台开发版', '平台线上版'].includes(BUILD_TYPE)) { // 注意区分环境，根据项目实际情况配置
+    if (process.env.NODE_ENV === 'development' || ['平台开发版', '平台测试版'].includes(BUILD_TYPE)) { // 注意区分环境，根据项目实际情况配置
       config.module
         .rule('mp-devtool') // 链式操作用来分组的名字
         .test(/\.(vue)|(js)$/)
