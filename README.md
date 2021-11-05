@@ -2,9 +2,22 @@
 
 > 小程序调试工具
 
-![功能描述](https://qnm.hunliji.com/FvSDNGrxBACqQPDKU7LMEXUceTNr?imageView2/2/w/250)
+<center class="half">
+  <img src="https://qnm.hunliji.com/FiVynqoJ0ADV3yL5d9X9q8t8TG1V" width="50%" align="left"/>
+  <img src="https://qnm.hunliji.com/FqoqokQwl5eHgy-oMaCm4e3xwTtJ" width="50%" align="left"/>
+</center>
 
-![埋点查看](https://qnm.hunliji.com/Fl7myHyENLRklxiGgy0Ze2HJ5d9u?imageView2/2/w/250)
+<center class="half">
+  <img src="https://qnm.hunliji.com/FhMsLJkNBhLS4qoK6KfO37BKPGhW" width="50%" align="left"/>
+  <img src="https://qnm.hunliji.com/Fl9q5tN7BGyGYDGF6xu4rNppSlZ4" width="50%" align="left"/>
+</center>
+
+## 更新日志
+2021-11-05 v0.0.8 
+- 图标支持拖拽 
+- 支持network
+- 支持切换网关隔离
+
 
 ## 使用方式
 
@@ -24,7 +37,7 @@ const { BUILD_TYPE = '' } = process.env
 module.exports = {
   chainWebpack: (config) => {
     // ...
-    if (BUILD_TYPE !== '体验版') { // 注意区分环境，根据项目实际情况配置
+    if (['平台开发版', '平台线上版'].includes(BUILD_TYPE)) { // 注意区分环境，根据项目实际情况配置
       config.module
         .rule('mp-devtool') // 链式操作用来分组的名字
         .test(/\.(vue)|(js)$/)
