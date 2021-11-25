@@ -1,61 +1,83 @@
 <template>
-  <div class="container" v-if="devIconVisible">
-    <div class="dev-icon" @click="handleDevIconClick">W</div>
-    <div class="menus-container" :class="{ 'menus-container-show': menusVisible }">
-      <ul class="menus">
-        <li class="menu-item" @click="handleMenuClick(item.key)" v-for="item in menus" :key="item.key">
-          <img class="menu-img" :src="item.icon" />
-          <span class="menu-name">{{ item.name }}</span>
-        </li>
-      </ul>
-    </div>
-    <sider :menu-key.sync="currentMenuKey"></sider>
+  <div class="container">
+    <view
+      id="menu"
+      class="dev-icon"
+      ref="myMenu"
+      :style="{ transform: `translate(${drag.x || 0}px, ${drag.y || 0}px)` }"
+      @touchstart="(e) => drag.start(e)"
+      @touchmove.stop.prevent="(e) => drag.move(e)"
+      @touchend="(e) => drag.end(e)"
+      @click="showPopup = !showPopup"
+    >
+      W
+    </view>
+
+    <wy-devtool-popup v-model="showPopup">
+      <div class="wy-mp-devtool__wrapper">
+        <div class="menus__container">
+          <ul class="menus">
+            <li v-for="menu in menus" :key="menu.key" :class="['meun-item', { actived: menu.key === curMenu.key }]" @click="handleMenuClick(menu)">{{ menu.name }}</li>
+          </ul>
+        </div>
+        <div class="main__container">
+          <monitor v-show="curMenu.key === 'Monitor'"></monitor>
+          <page-info v-show="curMenu.key === 'Page'"></page-info>
+          <network v-show="curMenu.key === 'Network'"></network>
+          <gateway-tag v-show="curMenu.key === 'GatewayTag'"></gateway-tag>
+        </div>
+      </div>
+    </wy-devtool-popup>
   </div>
 </template>
 <script>
-import Sider from './components/Sider.vue'
-import menus from './menus'
+import menus from './menus.js'
+import { ElDrag } from './util/index.js'
+
+import WyDevtoolPopup from './ui/wy-devtool-popup.vue'
+import Monitor from './components/Monitor.vue'
+import PageInfo from './components/PageInfo.vue'
+import Network from './components/Network.vue'
+import GatewayTag from './components/GatewayTag.vue'
 
 export default {
   name: 'wy-mp-devtool',
   components: {
-    Sider
+    WyDevtoolPopup,
+    Monitor,
+    PageInfo,
+    Network,
+    GatewayTag
   },
   data () {
     return {
       menus: menus,
-      currentMenuKey: '',
-      devIconVisible: true,
-      menusVisible: false
+      showPopup: false,
+      curMenu: menus[0] || {},
+      drag: {}
     }
-  },
-  watch: {
-    menusVisible () {}
   },
   methods: {
-    handleDevIconClick () {
-      if (this.currentMenuKey) {
-        this.currentMenuKey = ''
-      } else {
-        this.menusVisible = !this.menusVisible
-      }
-    },
-    handleMenuClick (key) {
-      if (key === 'close') {
-        this.menusVisible = false
-        this.devIconVisible = false
-        return
-      }
-      this.currentMenuKey = key
-      this.menusVisible = false
+    handleMenuClick (menu = {}) {
+      this.curMenu = menu
     }
+  },
+  created () {
+    const query = uni.createSelectorQuery().in(this)
+    const menuRef = query.select('#menu')
+    this.drag = new ElDrag(menuRef)
+  },
+  destroyed () {
+    this.drag.destroy()
   }
 }
 </script>
 <style scoped>
-.container {
-  z-index: 99999;
+.dev-icon {
   position: fixed;
+  top: 160px;
+  left: 0px;
+  z-index: 9999;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -64,60 +86,34 @@ export default {
   justify-content: center;
   color: #fff;
   background: rgba(0, 0, 0, 0.3);
-  bottom: 100px;
-  right: 10px;
+  user-select: none;
 }
-.dev-icon {
-  width: 100%;
+.wy-mp-devtool__wrapper {
+  display: flex;
+  flex-direction: column;
+  color: #000;
+  font-size: 14px;
   height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.menus-container {
-  position: absolute;
-  right: -100%;
-  width: 0;
-  height: 0;
-  opacity: 0;
-
-  /* transition: all 0.3s ease 0s; */
-  transition: width, height, opacity 0.3s ease 0s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  border-radius: 20px;
-}
-.menus-container-show {
-  width: 300px;
-  height: 300px;
-  opacity: 1;
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 999999;
+  overflow: hidden;
 }
 .menus {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-}
-.menu-img {
-  width: 35px;
-  height: 35px;
-}
-.menu-item {
   display: flex;
-  justify-content: space-evenly;
   align-items: center;
-  white-space: nowrap;
-  flex-direction: column;
+  border-bottom: 1px solid #e4e7ed;
+}
+.meun-item {
+  height: 35px;
+  line-height: 35px;
+  padding: 0 10px;
+  border-right: 1px solid #e4e7ed;
+  list-style: none;
+  background: #f5f7fa;
+}
+.meun-item.actived {
+  background: #fff;
+}
+.main__container {
+  flex: 1;
   overflow: hidden;
-  font-size: 14px;
 }
 </style>

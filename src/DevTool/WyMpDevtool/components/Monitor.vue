@@ -58,36 +58,36 @@ export default {
   name: 'mp-devtool-monitor',
   components: {},
   props: {},
-  data() {
+  data () {
     return {
       records: this.$recorder.getAll(),
       keyword: '',
       filterPageMonitor: true
     }
   },
-  created() {
+  created () {
     this.$recorder.bus.$on('update', (records) => {
       this.records = records
     })
   },
   methods: {
-    handleDelete() {
+    handleDelete () {
       this.$recorder.clear()
     },
-    isString(v) {
+    isString (v) {
       return typeof v === 'string'
     },
-    checkboxChange(e) {
+    checkboxChange (e) {
       this.filterPageMonitor = !!e.detail.value.length
     },
-    handleCardLongpress(monitorIndex) {
+    handleCardLongpress (monitorIndex) {
       uni.setClipboardData({
         data: JSON.stringify(this.filteredMonitors[monitorIndex])
       })
     }
   },
   computed: {
-    monitors() {
+    monitors () {
       const records = this.records.reduce((res, record) => {
         const monitor = formatMonitor(record)
         monitor && res.push(monitor)
@@ -95,7 +95,7 @@ export default {
       }, [])
       return records
     },
-    filteredMonitors() {
+    filteredMonitors () {
       const { keyword, filterPageMonitor } = this
       let { monitors } = this
 
@@ -113,18 +113,18 @@ export default {
 
 <style scoped>
 .component-mp-devtool-monitor {
+  height: 100%;
   color: #232833;
   font-size: 12px;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .action {
   display: flex;
   padding: 10px;
-  position: sticky;
-  top: -1px;
   background: #fff;
-  z-index: 10;
 }
 
 .delete {
@@ -140,6 +140,7 @@ export default {
 }
 
 .filter-input {
+  flex: 1;
   height: 25px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -152,16 +153,17 @@ export default {
 }
 
 .monitor-list {
-  overflow-y: auto;
+  flex: 1;
+  overflow: auto;
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding-bottom: 30px;
+  padding-bottom: 20px;
 }
 
 .monitor-card {
   box-shadow: 0 2px 8px 0 rgb(52 56 75 / 20%);
-  padding: 5px;
+  padding: 12px;
   font-size: 12px;
   box-sizing: border-box;
   border-radius: 6px;
@@ -174,7 +176,7 @@ export default {
 .time {
   position: absolute;
   top: 5px;
-  right: 5px;
+  right: 8px;
 }
 
 .card-row {
