@@ -171,6 +171,7 @@ export default {
   margin: 10px;
   margin-top: 0;
   padding-top: 20px;
+  word-break: break-all;
 }
 
 .time {
