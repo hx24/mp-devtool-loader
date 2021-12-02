@@ -4,27 +4,22 @@ const estraverse = require("estraverse")
 const escodegen = require("escodegen")
 const { copyDirOnceSync } = require("./file")
 
-// TODO 包名提出来
-const packageName = "wyMpDevtoolInit"
-
 /**
  * 拷贝js文件到node_modules下
- * @param {string | string[]} jsPath 待拷贝js文件路径
- * @param {string} target
+ * @param {string | string[]} jsFolderPath 待拷贝js文件夹路径
+ * @param {string} packageName 复制后的包名(node_modules下的文件夹名)
  */
-function copyJsFiles(jsPath) {
-  // TODO 暂时只考虑单文件插入
-  copyDirOnceSync(jsPath, path.resolve(`./node_modules/${packageName}`))
-
-  // if (typeof jsPath === 'string') {
-  //   copyDirOnceSync(jsPath, path.resolve(`./node_modules/${packageName}`))
-  // } else if (Array.isArray(jsPath)) {
-  //   // TODO 多个文件时这样直接拷贝有问题，全都拷贝到了同一目录下，若文件相互依赖会发生错误
-  //   jsPath.forEach(path => copyJsFiles(path))
-  // }
+function copyJsFolder(jsFolderPath, packageName) {
+  copyDirOnceSync(jsFolderPath, path.resolve(`./node_modules/${packageName}`))
 }
 
-function injectImportDeclaration(source) {
+/**
+ * 在代码的最后一个import后插入一段代码
+ * @param {String} source 要插入代码的源码
+ * @param {String} code 要插入的代码
+ * @returns {String} 插入后的新代码
+ */
+function injectCodeAfterLastImportDeclaration(source, code) {
   const sourceAst = acorn.parse(source, { sourceType: "module", ecmaVersion: 2020 })
   let lastNode = null
   estraverse.traverse(sourceAst, {
@@ -35,10 +30,9 @@ function injectImportDeclaration(source) {
     },
   })
   const lastImportDeclarationIndex = sourceAst.body.indexOf(lastNode) // 最后一个ImportDeclaration的索引
-  const importCode = `import '${packageName}'`
-  const importAst = acorn.parse(importCode, { sourceType: "module" })
+  const codeAst = acorn.parse(code, { sourceType: "module" })
 
-  sourceAst.body.splice(lastImportDeclarationIndex + 1, 0, importAst)
+  sourceAst.body.splice(lastImportDeclarationIndex + 1, 0, codeAst)
   const newSource = escodegen
     .generate(sourceAst, {
       indent: "  ",
@@ -59,8 +53,15 @@ function injectJs(source, resourcePath, config) {
   const { injectJsEntry, injectJsPath } = config
   // TODO 优化路径匹配方式
   if (injectJsEntry.toLowerCase() === resourcePath.toLowerCase()) {
-    copyJsFiles(injectJsPath)
-    source = injectImportDeclaration(source)
+    const packageName = path.basename(injectJsPath)
+    copyJsFolder(injectJsPath, packageName)
+    // TODO 优化，提取插入代码
+    const code = `
+      import '${packageName}'
+      import WyMpDevtool from 'WyMpDevtool'
+      Vue.component('wy-mp-devtool', WyMpDevtool)
+    `
+    source = injectCodeAfterLastImportDeclaration(source, code)
   }
   return source
 }

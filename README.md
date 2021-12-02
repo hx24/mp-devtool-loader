@@ -56,22 +56,6 @@ module.exports = {
 其底层使用的是 webpack-chain 的包,vue-cli 对其描述不够全,可查看[webpack-chain 官方文档](https://github.com/Yatoo2018/webpack-chain/tree/zh-cmn-Hans)
 
 
-
-### 3.注册全局组件
-
-注册 WyMpDevtool 为全局组件，修改 src/pages.json
-
-```json
-{
-  "easycom": {
-    "autoscan": true,
-    "custom": {
-      "wy-mp-devtool": "WyMpDevtool/index.vue"
-    }
-  }
-}
-```
-
 配成完成后启动项目即可
 
 

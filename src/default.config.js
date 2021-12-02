@@ -6,7 +6,7 @@ const injectComponentRule = []
 const componentPath = path.resolve(__dirname, "./DevTool/WyMpDevtool")
 const injectJsEntry = path.resolve("./src/main.js")
 const pagesJsonPath = path.resolve("./src/pages.json")
-const injectJsPath = path.resolve(__dirname, "./DevTool/injectJs")
+const injectJsPath = path.resolve(__dirname, "./DevTool/WyMpDevtoolInit")
 
 const schema = {
   type: "object",
