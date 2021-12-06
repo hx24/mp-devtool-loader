@@ -18,8 +18,6 @@ export default {
       gatewayTag: this.$devToolStore.get('gatewayTag') || ''
     }
   },
-  mounted () {},
-  created () {},
   methods: {
     handleTagChange () {
       this.$devToolStore.set('gatewayTag', this.gatewayTag)

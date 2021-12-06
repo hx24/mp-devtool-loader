@@ -10,7 +10,7 @@
       W
     </view>
 
-    <wy-devtool-popup v-model="showPopup">
+    <wy-devtool-popup v-model="showPopup" >
       <div class="wy-mp-devtool__wrapper">
         <div class="menus__container">
           <ul class="menus">
@@ -22,6 +22,7 @@
           <page-info v-show="curMenu.key === 'Page'"></page-info>
           <network v-show="curMenu.key === 'Network'"></network>
           <gateway-tag v-show="curMenu.key === 'GatewayTag'"></gateway-tag>
+          <go-h5 v-show="curMenu.key === 'GoH5'"></go-h5>
         </div>
       </div>
     </wy-devtool-popup>
@@ -36,6 +37,7 @@ import Monitor from './components/Monitor.vue'
 import PageInfo from './components/PageInfo.vue'
 import Network from './components/Network.vue'
 import GatewayTag from './components/GatewayTag.vue'
+import GoH5 from './components/GoH5.vue'
 
 export default {
   name: 'wy-mp-devtool',
@@ -44,7 +46,8 @@ export default {
     Monitor,
     PageInfo,
     Network,
-    GatewayTag
+    GatewayTag,
+    GoH5
   },
   data () {
     return {
@@ -72,8 +75,8 @@ export default {
 <style scoped>
 .dev-icon {
   position: fixed;
-  top: 160px;
-  left: 0px;
+  bottom: 200px;
+  right: 5px;
   z-index: 9999;
   width: 40px;
   height: 40px;
@@ -93,12 +96,16 @@ export default {
   height: 100%;
   overflow: hidden;
 }
+
 .menus {
+  white-space: nowrap;
+  overflow-x: scroll;
   display: flex;
   align-items: center;
   border-bottom: 1px solid #e4e7ed;
 }
 .meun-item {
+  display: inline-block;
   height: 35px;
   line-height: 35px;
   padding: 0 10px;

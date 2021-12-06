@@ -8,11 +8,10 @@ export function rewriteRequest (recorder) {
     const id = recorder.addRecord(options)
     const _this = this
     const { complete } = options
-    const startTime = +new Date()
 
     function _complete (...args) {
       typeof complete === 'function' && complete.apply(_this, args)
-      recorder.addResponse(id, startTime, ...args)
+      recorder.addResponse(id, ...args)
     }
 
     setHeaders(options.header)

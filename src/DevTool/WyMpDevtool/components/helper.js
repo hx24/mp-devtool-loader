@@ -5,7 +5,7 @@
 const monitorHostReg = /track\w+\.guahao/ // 匹配挂号的埋点[测试和线上都是https://trackh5.guahao.cn域名上报的]
 
 export function formatMonitor (record) {
-  const { url, data: reqData, time } = record
+  const { url, data: reqData, time, startTime } = record
 
   if (!monitorHostReg.test(url)) return false
 
@@ -21,7 +21,7 @@ export function formatMonitor (record) {
   pageUrl = parsedPdata.url ? decodeURIComponent(parsedPdata.url) : ''
 
   const clickId = parsedPdata.click_id
-  const event = parsedPdata.click_event
+  const event = decodeURIComponent(parsedPdata.click_event || '')
 
   const isPageMonitor = !event && !clickId && !!pageUrl
   return {
@@ -30,7 +30,8 @@ export function formatMonitor (record) {
     isPageMonitor,
     pageUrl,
     params: data,
-    time
+    time,
+    startTime
   }
 }
 

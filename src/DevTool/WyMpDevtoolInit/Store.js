@@ -35,12 +35,9 @@ export default class Store {
    */
   set (key, value, instance) {
     this.data[key] = value
-    console.log('this.instances', this.instances)
     this.instances.forEach(ins => {
-      console.log('key diff', ins[key], value)
       if (ins !== instance && ins[key] !== value) {
         ins[key] = value
-        console.log('设置值')
       }
     })
     wx.setStorageSync(STORE_STORAGE_KEY, this.data)

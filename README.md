@@ -2,17 +2,30 @@
 
 > 小程序调试工具
 
-<center class="half">
-  <img src="https://qnm.hunliji.com/FiVynqoJ0ADV3yL5d9X9q8t8TG1V" width="50%" align="left"/>
-  <img src="https://qnm.hunliji.com/FqoqokQwl5eHgy-oMaCm4e3xwTtJ" width="50%" align="left"/>
+<center class="half" style="display: flex; justify-content: space-around; padding: 20px">
+  <img src="https://qnm.hunliji.com/Fn9zALwtc8zW8SV4D1IqNoupmVKM" width="300px" align="left"/>
+  <img src="https://qnm.hunliji.com/Fqiw3sC0_4l2f1bClrWAjaiOt1cM" width="300px" align="right"/>
 </center>
 
-<center class="half">
-  <img src="https://qnm.hunliji.com/FhMsLJkNBhLS4qoK6KfO37BKPGhW" width="50%" align="left"/>
-  <img src="https://qnm.hunliji.com/Fl9q5tN7BGyGYDGF6xu4rNppSlZ4" width="50%" align="left"/>
+<center class="half" style="display: flex; justify-content: space-around; padding: 20px">
+  <img src="https://qnm.hunliji.com/FteLrdCE44UYi40CYMhiuSjsIWt4" width="300px" align="left"/>
+  <img src="https://qnm.hunliji.com/FpkFzbp623QqzGAvjPuge9agUZ0m" width="300px" align="left"/>
 </center>
+
+<center class="half" style="display: flex; justify-content: space-around; padding: 20px">
+  <img src="https://qnm.hunliji.com/FpkFzbp623QqzGAvjPuge9agUZ0m" width="300px" align="left"/>
+</center>
+
+
+
+
 
 ## 更新日志
+
+2021-12-02 v0.0.11
+- 支持打开H5页面
+- 简化接入流程
+
 2021-11-05 v0.0.9 
 - 图标支持拖拽 
 - 支持network

@@ -9,7 +9,7 @@
     </div>
     <ul scroll-y class="monitor-list">
       <li class="monitor-card" v-for="(monitor, index) in filteredMonitors" :key="monitor.id" @longpress="handleCardLongpress(index)">
-        <div class="time">{{ monitor.time }}</div>
+        <div class="time">{{ monitor.startTime | time }}</div>
         <template v-if="monitor.isPageMonitor">
           <div class="card-row">
             <div class="label">页面埋点</div>
@@ -53,11 +53,18 @@
 
 <script>
 import { formatMonitor } from './helper'
+import { getTime } from '../util/date'
 
 export default {
   name: 'mp-devtool-monitor',
   components: {},
   props: {},
+  filters: {
+    time (t) {
+      if (!t) return ''
+      return getTime(t)
+    }
+  },
   data () {
     return {
       records: this.$recorder.getAll(),
@@ -98,7 +105,6 @@ export default {
     filteredMonitors () {
       const { keyword, filterPageMonitor } = this
       let { monitors } = this
-
       if (filterPageMonitor) {
         monitors = monitors.filter((item) => !item.isPageMonitor)
       }
@@ -158,7 +164,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding-bottom: 20px;
+  padding: 5px 0 20px;
 }
 
 .monitor-card {

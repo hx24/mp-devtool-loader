@@ -77,7 +77,7 @@ export default {
           response
         }
       } else {
-        delete this.details[id] // TODO 考虑空间和时间的取舍
+        delete this.details[id] // TODO 空间更重要，每次删除，需要再检查下是否有内存泄漏
       }
       this.$forceUpdate()
     },

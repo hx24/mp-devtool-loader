@@ -24,15 +24,17 @@ export default class Recorder {
   }
 
   updateRecord (id, options) {
+    const now = +new Date()
     try {
       const records = this.getAll()
       const record = records.find(record => record.id === id)
       if (record) {
-        Object.assign(record, options)
+        Object.assign(record, options, {
+          time: now - record.startTime
+        })
         wx.setStorageSync(REQUESTS_STORAGE_KEY, records)
         this.bus.$emit('update', records)
       }
-      console.log('update', options)
     } catch (error) {
       console.error(error)
     }
@@ -66,7 +68,8 @@ export default class Recorder {
       header,
       method,
       dataType,
-      id
+      id,
+      startTime: +new Date()
     }
   }
 
@@ -100,13 +103,12 @@ export default class Recorder {
     }
   }
 
-  addResponse (id, startTime, res) {
+  addResponse (id, res) {
     // 对request的成功回调进行切片，记录响应值
     try {
       const allResponse = wx.getStorageSync(RESPONSES_STORAGE_KEY) || {}
       const response = JSON.parse(JSON.stringify(res))
       this.updateRecord(id, {
-        time: +new Date() - startTime,
         status: response.statusCode
       })
       allResponse[id] = response
