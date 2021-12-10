@@ -20,25 +20,14 @@ export class ElDrag {
       writable: false
     })
 
-    this.getRefInfo().then(data => {
-      const { width, height, left, top } = data
-      this.width = width
-      this.height = height
-      this.left = left
-      this.top = top
-    })
+    this.getBasicInfo()
 
-    uni.getSystemInfo({
-      success: info => {
-        this.windowWidth = info.windowWidth
-        this.windowHeight = info.windowHeight
-      }
-    })
-
-    const { x, y } = wx.getStorageSync(STORAGE_POSITION_KEY) || {}
-    // 偏移距离
-    this.x = x || 0
-    this.y = y || 0
+    // const { x, y } = wx.getStorageSync(STORAGE_POSITION_KEY) || {}
+    // // 偏移距离
+    // this.x = x || 0
+    // this.y = y || 0
+    this.x = 0
+    this.y = 0
 
     // 当前坐标
     this.curPoint = {
@@ -47,9 +36,28 @@ export class ElDrag {
     }
     // 拖动原点(相对位置，相对自身)
     this.startPoint = {}
+
+    // console.log('this.sideDistance', this.sideDistance)
   }
 
-  start (ev) {
+  async getBasicInfo () {
+    await Promise.all([
+      this.getRefInfo().then(data => {
+        const { width, height, left, top } = data
+        this.width = width
+        this.height = height
+        this.left = left
+        this.top = top
+      }),
+      this.getSystemInfo().then(info => {
+        this.windowWidth = info.windowWidth
+        this.windowHeight = info.windowHeight
+      })
+    ])
+    this.sideDistance = await this.getSideDistance()
+  }
+
+  async start (ev) {
     // 记录一开始手指按下的坐标
     const touch = ev.changedTouches[0]
     this.startPoint.x = touch.pageX
@@ -73,8 +81,16 @@ export class ElDrag {
     diffPoint.x = touch.pageX - this.startPoint.x
     diffPoint.y = touch.pageY - this.startPoint.y
     // 移动的距离 = 差值 + 当前坐标点
-    this.x = diffPoint.x + this.curPoint.x
-    this.y = diffPoint.y + this.curPoint.y
+    const x = diffPoint.x + this.curPoint.x
+    const y = diffPoint.y + this.curPoint.y
+
+    const { left, right, top, bottom } = this.sideDistance
+    if (x >= left && x <= right) {
+      this.x = x
+    }
+    if (y >= top && y <= bottom) {
+      this.y = y
+    }
   }
 
   end (ev) {
@@ -95,38 +111,83 @@ export class ElDrag {
     })
   }
 
+  getSystemInfo () {
+    return new Promise(resolve => {
+      uni.getSystemInfo({
+        success: info => {
+          resolve(info)
+        }
+      })
+    })
+  }
+
   /**
    * 移动到边界
    */
   async moveToSide () {
+    const { x, y } = await this.getSidePosition()
+
+    this.x = x
+    this.y = y
+    wx.setStorageSync(STORAGE_POSITION_KEY, { x, y })
+
+    iDrags.forEach(iDrag => {
+      if (iDrag !== this) {
+        iDrag.x = x
+        iDrag.y = y
+      }
+    })
+  }
+
+  /**
+   * 获取移动到边界时的坐标
+   */
+  async getSidePosition () {
     const refInfo = await this.getRefInfo()
     const { width, height, left, top } = refInfo
     const { windowWidth, windowHeight } = this
 
+    let x = this.x
+    let y = this.y
+
     if (left + width / 2 < windowWidth / 2) {
       // 移动到左边界
-      this.x -= left
+      x = this.sideDistance.left
     } else {
       // 移动到右边界
-      this.x += (windowWidth - left - width)
+      x = this.sideDistance.right
     }
 
     if (top < 0) {
       // 移动到上边界
-      this.y -= top
+      y = this.sideDistance.top
     } else if (top + height > windowHeight) {
       // 移动到下边界
-      this.y += (windowHeight - top - height)
+      y = this.sideDistance.bottom
     }
 
-    wx.setStorageSync(STORAGE_POSITION_KEY, { x: this.x, y: this.y })
+    return { x, y }
+  }
 
-    iDrags.forEach(iDrag => {
-      if (iDrag !== this) {
-        iDrag.x = this.x
-        iDrag.y = this.y
-      }
-    })
+  async getSideDistance () {
+    const sideSpace = 5 // 边距
+
+    const refInfo = await this.getRefInfo()
+    const { width, height, left, top } = refInfo
+    const { windowWidth, windowHeight } = this
+
+    const position = {
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0
+    }
+
+    position.left = -left + sideSpace
+    position.right = windowWidth - left - width - sideSpace
+    position.top = -top + sideSpace
+    position.bottom = windowHeight - top - height - sideSpace
+    return position
   }
 
   /**

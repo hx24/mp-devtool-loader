@@ -16,8 +16,8 @@
           <div class="overview-column overview-time">Time</div>
         </div>
       </li>
-      <li class="network-row" v-for="record in filteredRecords" :key="record.id" >
-        <div class="network-row-overview" @click="toggleRecordDetail(record)">
+      <li class="network-row" v-for="(record, index) in filteredRecords" :key="record.id" >
+        <div class="network-row-overview" @click="toggleRecordDetail(index)">
           <div class="overview-column overview-name">{{ record.url }}</div>
           <div class="overview-column overview-method">{{ record.method }}</div>
           <div class="overview-column overview-status">{{ record.status }}</div>
@@ -26,7 +26,7 @@
             <template v-else>pending</template>
           </div>
         </div>
-        <div class="network-row-detail" v-if="exposeData[record.id]" v-html="syntaxHighlightDetail(record.id)" @longpress="copyDetail(record.id)"></div>
+        <div class="network-row-detail" v-if="expandIndex === index" v-html="syntaxHighlightDetail()" @longpress="copyDetail()"></div>
       </li>
     </ul>
   </section>
@@ -41,9 +41,23 @@ export default {
     return {
       records: this.$recorder.getAll(),
       keyword: '',
-      details: {},
       filterMonitor: true,
-      exposeData: {}
+      detail: {},
+      expandIndex: -1
+    }
+  },
+  watch: {
+    keyword () {
+      this.expandIndex = -1
+    }
+  },
+  computed: {
+    filteredRecords () {
+      const { keyword, records, filterMonitor } = this
+      if (!keyword && !filterMonitor) return records
+      return (records || []).filter((record) => {
+        return record.url.includes(keyword) && (!filterMonitor || !record.url.includes('trackh5.guahao'))
+      })
     }
   },
   created () {
@@ -61,28 +75,27 @@ export default {
     isString (v) {
       return typeof v === 'string'
     },
-    copyDetail (id) {
+    copyDetail () {
       uni.setClipboardData({
-        data: JSON.stringify(this.details[id])
+        data: JSON.stringify(this.detail)
       })
     },
-    toggleRecordDetail (record) {
-      const { exposeData } = this
-      const { id } = record
-      exposeData[id] = !exposeData[id]
-      if (exposeData[id]) {
-        const response = this.$recorder.getResponse(id)
-        this.details[id] = {
+    toggleRecordDetail (index) {
+      if (index === this.expandIndex) {
+        this.expandIndex = -1
+        this.detail = {}
+      } else {
+        const record = this.filteredRecords[this.expandIndex = index]
+        const response = this.$recorder.getResponse(record.id)
+        this.detail = {
           request: record,
           response
         }
-      } else {
-        delete this.details[id] // TODO 空间更重要，每次删除，需要再检查下是否有内存泄漏
+        this.$forceUpdate()
       }
-      this.$forceUpdate()
     },
-    syntaxHighlightDetail (id) {
-      let json = this.details[id]
+    syntaxHighlightDetail () {
+      let json = this.detail
       if (typeof json !== 'string') {
         json = JSON.stringify(json, undefined, 2)
       }
@@ -103,15 +116,6 @@ export default {
         return `<span style="color: ${color}; ">${match}</span>`
       })
       return `<pre style="word-break: break-all; white-space: pre-wrap;">${json}</pre>`
-    }
-  },
-  computed: {
-    filteredRecords () {
-      const { keyword, records, filterMonitor } = this
-      if (!keyword && !filterMonitor) return records
-      return (records || []).filter((record) => {
-        return record.url.includes(keyword) && (!filterMonitor || !record.url.includes('trackh5.guahao'))
-      })
     }
   }
 }

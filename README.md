@@ -2,21 +2,8 @@
 
 > 小程序调试工具
 
-<center class="half" style="display: flex; justify-content: space-around; padding: 20px">
-  <img src="https://qnm.hunliji.com/Fn9zALwtc8zW8SV4D1IqNoupmVKM" width="300px" align="left"/>
-  <img src="https://qnm.hunliji.com/Fqiw3sC0_4l2f1bClrWAjaiOt1cM" width="300px" align="right"/>
-</center>
 
-<center class="half" style="display: flex; justify-content: space-around; padding: 20px">
-  <img src="https://qnm.hunliji.com/FteLrdCE44UYi40CYMhiuSjsIWt4" width="300px" align="left"/>
-  <img src="https://qnm.hunliji.com/FpkFzbp623QqzGAvjPuge9agUZ0m" width="300px" align="left"/>
-</center>
-
-<center class="half" style="display: flex; justify-content: space-around; padding: 20px">
-  <img src="https://qnm.hunliji.com/FpkFzbp623QqzGAvjPuge9agUZ0m" width="300px" align="left"/>
-</center>
-
-
+![图片](https://qnm.hunliji.com/FgbQbE_gbcuK_wps-JfyE5KwMhIB)
 
 
 

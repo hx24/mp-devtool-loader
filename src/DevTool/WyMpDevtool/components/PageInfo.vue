@@ -16,17 +16,19 @@ export default {
   components: {},
   props: {},
   data () {
+    return {
+      curUrl: ''
+    }
+  },
+  mounted () {
     /* eslint-disable-next-line */
     const routes = getCurrentPages()
     const page = routes?.[routes.length - 1] || {}
     const route = '/' + page.route
     const fullPath = page.$page?.fullPath
 
-    return {
-      curUrl: fullPath || route
-    }
+    this.curUrl = fullPath || route
   },
-  mounted () {},
   created () {},
   methods: {
     copy (data) {

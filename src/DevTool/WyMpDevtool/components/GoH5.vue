@@ -59,7 +59,7 @@ export default {
         icon: 'none'
       })
       uni.navigateTo({
-        url: `/pages/h5/index?url=${encodeURIComponent(url)}`
+        url: `/pages/h5/index?url=${encodeURIComponent(url.trim())}`
       })
     }
   },

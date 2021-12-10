@@ -5,6 +5,9 @@
       class="dev-icon"
       ref="myMenu"
       :style="{ transform: `translate(${drag.x || 0}px, ${drag.y || 0}px)` }"
+      @touchstart="(e) => drag.start(e)"
+      @touchmove.stop.prevent="(e) => drag.move(e)"
+      @touchend="(e) => drag.end(e)"
       @click="showPopup = !showPopup"
     >
       W
