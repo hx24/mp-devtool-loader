@@ -2,16 +2,7 @@ const path = require("path")
 const acorn = require("acorn")
 const estraverse = require("estraverse")
 const escodegen = require("escodegen")
-const { copyDirOnceSync } = require("./file")
-
-/**
- * 拷贝js文件到node_modules下
- * @param {string | string[]} jsFolderPath 待拷贝js文件夹路径
- * @param {string} packageName 复制后的包名(node_modules下的文件夹名)
- */
-function copyJsFolder(jsFolderPath, packageName) {
-  copyDirOnceSync(jsFolderPath, path.resolve(`./node_modules/${packageName}`))
-}
+const { humpToHyphen } = require('./tools')
 
 /**
  * 在代码的最后一个import后插入一段代码
@@ -42,25 +33,59 @@ function injectCodeAfterLastImportDeclaration(source, code) {
 }
 
 /**
+ * 
+ * @param {string[]} scripts 要在入口注入的js文件路径
+ * @param {object[]} components 插入组件配置
+ */
+function getInjectCode(scripts, components) {
+  let scriptCode = ''
+  scripts.forEach(scriptPath => {
+    scriptCode += `
+      import '${scriptPath}'`
+  })
+
+  let registerComponentCode = ''
+  components.forEach(component => {
+    const { name, path } = component
+    scriptCode += `
+      import ${name} from '${path}'`
+
+    registerComponentCode += `
+      Vue.component('${humpToHyphen(name)}', ${name})`
+  })
+
+
+  const code = `
+    ${scriptCode}
+    ${registerComponentCode}`
+  return code
+}
+
+/**
  * 拷贝待插入js文件到node_modules下，并在入口中引用
  * @param {string} source 入口文件源码
  * @param {string} resourcePath 当前解析的文件的路径
  * @param {object} config loader配置
  * @param {string} config.injectJsEntry 入口文件路径，默认main.js
- * @param {string} config.injectJsPath 要在入口注入的js文件路径
+ * @param {string[]} scripts 要在入口注入的js文件路径
+ * @param {object[]} components 插入组件配置
+ * @param {string} components[].name 组件名称
  */
 function injectJs(source, resourcePath, config) {
-  const { injectJsEntry, injectJsPath } = config
+  const { injectJsEntry, scripts, components } = config
   // TODO 优化路径匹配方式
   if (injectJsEntry.toLowerCase() === resourcePath.toLowerCase()) {
-    const packageName = path.basename(injectJsPath)
-    copyJsFolder(injectJsPath, packageName)
     // TODO 优化，提取插入代码
-    const code = `
-      import '${packageName}'
-      import WyMpDevtool from 'WyMpDevtool'
-      Vue.component('wy-mp-devtool', WyMpDevtool)
-    `
+    const code = getInjectCode(scripts, components)
+    // const code = `
+    //   import '${packageName}'
+    //   import WyMpDevtool from 'WyMpDevtool'
+    //   Vue.component('wy-mp-devtool', WyMpDevtool)
+    // `
+    // const code = `
+    //   import '@weiyi/mp-devtool-loader/src/DevTool/scripts/index.js'
+    // `
+    console.log('code', code)
     source = injectCodeAfterLastImportDeclaration(source, code)
   }
   return source
