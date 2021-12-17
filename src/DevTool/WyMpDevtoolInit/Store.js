@@ -3,7 +3,7 @@ import { STORE_STORAGE_KEY } from './constant'
 export default class Store {
   constructor () {
     this.instances = [] // 组件实例列表
-    this.data = wx.getStorageSync(STORE_STORAGE_KEY) || {} // 所有需同步数据
+    this.data = uni.getStorageSync(STORE_STORAGE_KEY) || {} // 所有需同步数据
   }
 
   /**
@@ -40,6 +40,6 @@ export default class Store {
         ins[key] = value
       }
     })
-    wx.setStorageSync(STORE_STORAGE_KEY, this.data)
+    uni.setStorageSync(STORE_STORAGE_KEY, this.data)
   }
 }

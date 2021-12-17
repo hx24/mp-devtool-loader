@@ -1,9 +1,9 @@
 import Vue from 'vue'
 
 export function rewriteRequest (recorder) {
-  var wxRequest = wx.request
+  var wxRequest = uni.request
   Object.defineProperty(wx, 'request', { writable: true })
-  wx.request = function (options) {
+  uni.request = function (options) {
     options = options || {}
     const id = recorder.addRecord(options)
     const _this = this

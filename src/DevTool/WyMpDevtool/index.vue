@@ -21,11 +21,25 @@
           </ul>
         </div>
         <div class="main__container">
-          <monitor v-show="curMenu.key === 'Monitor'"></monitor>
-          <page-info v-show="curMenu.key === 'Page'"></page-info>
-          <network v-show="curMenu.key === 'Network'"></network>
-          <gateway-tag v-show="curMenu.key === 'GatewayTag'"></gateway-tag>
-          <go-h5 v-show="curMenu.key === 'GoH5'"></go-h5>
+          <div v-show="curMenu.key === 'Monitor'">
+            <monitor ></monitor>
+          </div>
+          <div v-show="curMenu.key === 'Page'">
+            <page-info ></page-info></div>
+          <div v-show="curMenu.key === 'Network'">
+            <network ></network>
+          </div>
+          <div v-show="curMenu.key === 'GatewayTag'">
+            <gateway-tag ></gateway-tag>
+          </div>
+          <div v-show="curMenu.key === 'GoH5'">
+            <go-h5 ></go-h5>
+          </div>
+          <!-- <monitor v-show="curMenu.key === 'Monitor'"></monitor> -->
+          <!-- <page-info v-show="curMenu.key === 'Page'"></page-info> -->
+          <!-- <network v-show="curMenu.key === 'Network'"></network> -->
+          <!-- <gateway-tag v-show="curMenu.key === 'GatewayTag'"></gateway-tag> -->
+          <!-- <go-h5 v-show="curMenu.key === 'GoH5'"></go-h5> -->
         </div>
       </div>
     </wy-devtool-popup>
@@ -63,6 +77,7 @@ export default {
   methods: {
     handleMenuClick (menu = {}) {
       this.curMenu = menu
+      console.log(this.curMenu)
     }
   },
   created () {

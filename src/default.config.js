@@ -42,11 +42,11 @@ const schema = {
     injectJsPath: {
       anyOf: [
         {
-          description: "在入口文件中注入的js路径, 如重写wx.request, 绝对路径",
+          description: "在入口文件中注入的js路径, 如重写uni.request, 绝对路径",
           type: "string",
         },
         {
-          description: "在入口文件中注入的js文件路径列表, 如重写wx.request",
+          description: "在入口文件中注入的js文件路径列表, 如重写uni.request",
           type: "array",
         },
       ],
