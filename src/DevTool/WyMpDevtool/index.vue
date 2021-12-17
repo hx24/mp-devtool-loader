@@ -77,7 +77,6 @@ export default {
   methods: {
     handleMenuClick (menu = {}) {
       this.curMenu = menu
-      console.log(this.curMenu)
     }
   },
   created () {
