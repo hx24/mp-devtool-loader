@@ -22,7 +22,7 @@ export class ElDrag {
 
     this.getBasicInfo()
 
-    // const { x, y } = wx.getStorageSync(STORAGE_POSITION_KEY) || {}
+    // const { x, y } = uni.getStorageSync(STORAGE_POSITION_KEY) || {}
     // // 偏移距离
     // this.x = x || 0
     // this.y = y || 0
@@ -129,7 +129,7 @@ export class ElDrag {
 
     this.x = x
     this.y = y
-    wx.setStorageSync(STORAGE_POSITION_KEY, { x, y })
+    uni.setStorageSync(STORAGE_POSITION_KEY, { x, y })
 
     iDrags.forEach(iDrag => {
       if (iDrag !== this) {

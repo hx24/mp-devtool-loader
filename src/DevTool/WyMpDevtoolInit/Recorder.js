@@ -15,7 +15,7 @@ export default class Recorder {
       // if (records.length > 100) {
       //   records.splice(100) // 最多保留100数据
       // }
-      wx.setStorageSync(REQUESTS_STORAGE_KEY, records)
+      uni.setStorageSync(REQUESTS_STORAGE_KEY, records)
       this.bus.$emit('update', records)
       return record.id
     } catch (error) {
@@ -32,7 +32,7 @@ export default class Recorder {
         Object.assign(record, options, {
           time: now - record.startTime
         })
-        wx.setStorageSync(REQUESTS_STORAGE_KEY, records)
+        uni.setStorageSync(REQUESTS_STORAGE_KEY, records)
         this.bus.$emit('update', records)
       }
     } catch (error) {
@@ -43,7 +43,7 @@ export default class Recorder {
   getAll () {
     let records = []
     try {
-      records = wx.getStorageSync(REQUESTS_STORAGE_KEY) || []
+      records = uni.getStorageSync(REQUESTS_STORAGE_KEY) || []
       if (typeof records === 'string') {
         // 兼容遗留问题
         records = JSON.parse(records)
@@ -79,23 +79,23 @@ export default class Recorder {
   }
 
   static clearStatic () {
-    wx.removeStorageSync(REQUESTS_STORAGE_KEY)
-    wx.removeStorageSync(RESPONSES_STORAGE_KEY)
+    uni.removeStorageSync(REQUESTS_STORAGE_KEY)
+    uni.removeStorageSync(RESPONSES_STORAGE_KEY)
   }
 
   checkStorageSize () {
     try {
-      const { currentSize, limitSize } = wx.getStorageInfoSync()
+      const { currentSize, limitSize } = uni.getStorageInfoSync()
       if (currentSize > limitSize * 0.5) {
         const records = this.getAll()
         // 删除一半数据
         const deletedRecords = records.splice(records.length / 2)
-        const allResponse = wx.getStorageSync(RESPONSES_STORAGE_KEY) || {}
+        const allResponse = uni.getStorageSync(RESPONSES_STORAGE_KEY) || {}
         deletedRecords.forEach(record => {
           delete allResponse[record.id]
         })
-        wx.setStorageSync(REQUESTS_STORAGE_KEY, records)
-        wx.setStorageSync(RESPONSES_STORAGE_KEY, allResponse)
+        uni.setStorageSync(REQUESTS_STORAGE_KEY, records)
+        uni.setStorageSync(RESPONSES_STORAGE_KEY, allResponse)
         this.bus.$emit('update', records)
       }
     } catch (error) {
@@ -106,13 +106,13 @@ export default class Recorder {
   addResponse (id, res) {
     // 对request的成功回调进行切片，记录响应值
     try {
-      const allResponse = wx.getStorageSync(RESPONSES_STORAGE_KEY) || {}
+      const allResponse = uni.getStorageSync(RESPONSES_STORAGE_KEY) || {}
       const response = JSON.parse(JSON.stringify(res))
       this.updateRecord(id, {
         status: response.statusCode
       })
       allResponse[id] = response
-      wx.setStorageSync(RESPONSES_STORAGE_KEY, allResponse)
+      uni.setStorageSync(RESPONSES_STORAGE_KEY, allResponse)
       this.checkStorageSize()
     } catch (error) {
       console.error('格式化响应失败', error)
@@ -121,7 +121,7 @@ export default class Recorder {
 
   getResponse (id) {
     try {
-      const allResponse = wx.getStorageSync(RESPONSES_STORAGE_KEY) || {}
+      const allResponse = uni.getStorageSync(RESPONSES_STORAGE_KEY) || {}
       return allResponse[id]
     } catch (error) {
       console.error('读取相应失败', error)
