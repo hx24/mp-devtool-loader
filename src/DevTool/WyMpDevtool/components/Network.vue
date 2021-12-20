@@ -26,7 +26,10 @@
             <template v-else>pending</template>
           </div>
         </div>
-        <div class="network-row-detail" v-if="expandIndex === index" v-html="syntaxHighlightDetail()" @longpress="copyDetail()"></div>
+        <div v-if="expandIndex === index">
+          <div class="network-row-detail" v-if="platform === 'mp-weixin'" v-html="syntaxHighlightDetail()" @longpress="copyDetail()"></div>
+          <div v-else @longpress="copyDetail()">{{parsedDetail()}}</div>
+        </div>
       </li>
     </ul>
   </section>
@@ -43,7 +46,8 @@ export default {
       keyword: '',
       filterMonitor: true,
       detail: {},
-      expandIndex: -1
+      expandIndex: -1,
+      platform :process.env.VUE_APP_PLATFORM, // mp-weixin mp-alipay
     }
   },
   watch: {
@@ -93,6 +97,13 @@ export default {
         }
         this.$forceUpdate()
       }
+    },
+    parsedDetail(){
+      let json = this.detail
+      if (typeof json !== 'string') {
+        json = JSON.stringify(json, undefined, 2)
+      }
+      return json
     },
     syntaxHighlightDetail () {
       let json = this.detail
