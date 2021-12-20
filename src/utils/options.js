@@ -10,8 +10,13 @@ const { defaultConfig, schema } = require("../default.config")
 function getOptions(ctx) {
   const userOptions = _getOptions(ctx) || {}
   validate(schema, userOptions, { name: "@weiyi/mp-devtool-loader", baseDataPath: "options" })
-  const components = userOptions.components ? [...defaultConfig.components, ...userOptions.components] : defaultConfig.components
-  const scripts = userOptions.scripts ? [...defaultConfig.scripts, ...userOptions.scripts] : defaultConfig.scripts
+  const components = userOptions.components || []
+  const scripts = userOptions.scripts || []
+  if (userOptions.devtool) {
+    // 开启devtool
+    Object.assign([], components, defaultConfig.components)
+    Object.assign([], scripts, defaultConfig.scripts)
+  }
   return {
     ...defaultConfig,
     ...userOptions,

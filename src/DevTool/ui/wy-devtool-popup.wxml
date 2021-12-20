@@ -1,1 +1,0 @@
-<view class="{{['_div','wy-devtool-popup',[(value)?'show':'']]}}"><view data-event-opts="{{[['tap',[['handleClose',['$event']]]]]}}" class="wy-devtool-popup__mask _div" bindtap="__e"></view><view class="{{['_div','wy-devtool-popup__container',position]}}" style="{{'height:'+(height)+';'}}"><slot></slot></view></view>
