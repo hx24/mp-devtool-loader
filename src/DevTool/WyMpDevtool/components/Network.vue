@@ -81,7 +81,12 @@ export default {
     },
     copyDetail () {
       uni.setClipboardData({
-        data: JSON.stringify(this.detail)
+        data: JSON.stringify(this.detail),
+        success:()=>{
+          uni.showToast({
+            title:'复制成功'
+          })
+        }
       })
     },
     toggleRecordDetail (index) {
