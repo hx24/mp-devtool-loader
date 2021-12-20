@@ -1,6 +1,6 @@
 {
   "name": "@weiyi/mp-devtool-loader",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "小程序调试插件",
   "main": "src/index.js",
   "scripts": {},
@@ -17,6 +17,7 @@
     "acorn": "^8.4.1",
     "escodegen": "^2.0.0",
     "estraverse": "^5.2.0",
+    "htmlparser": "^1.7.7",
     "schema-utils": "^3.1.1"
   }
 }

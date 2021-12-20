@@ -1,4 +1,3 @@
-const path = require("path")
 const acorn = require("acorn")
 const estraverse = require("estraverse")
 const escodegen = require("escodegen")
