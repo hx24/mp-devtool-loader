@@ -2,7 +2,7 @@ export default [
   {
     icon: 'https://kano.guahao.cn/eSd542406321',
     key: 'Monitor',
-    name: '埋点查看1'
+    name: '埋点查看'
   },
   {
     key: 'Network',
