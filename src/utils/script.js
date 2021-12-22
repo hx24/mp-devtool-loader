@@ -74,17 +74,7 @@ function injectJs(source, resourcePath, config) {
   const { injectJsEntry, scripts, components } = config
   // TODO 优化路径匹配方式
   if (injectJsEntry.toLowerCase() === resourcePath.toLowerCase()) {
-    // TODO 优化，提取插入代码
     const code = getInjectCode(scripts, components)
-    // const code = `
-    //   import '${packageName}'
-    //   import WyMpDevtool from 'WyMpDevtool'
-    //   Vue.component('wy-mp-devtool', WyMpDevtool)
-    // `
-    // const code = `
-    //   import '@weiyi/mp-devtool-loader/src/DevTool/scripts/index.js'
-    // `
-    console.log('code', code)
     source = injectCodeAfterLastImportDeclaration(source, code)
   }
   return source
