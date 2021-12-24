@@ -1,41 +1,43 @@
 # 开发文档
 
-## 调试 loader
-
-> 可使用任意基于 vue-cli 创建的项目（包括 uni-app），一下以 vue-demo 为项目名举例
-
-### 配置 loader
-
-给当前项目创建软链
-
-```bash
+## 创建软链
+- 在当前loader项目 
+```
 npm link
 ```
 
-在测试项目中链接
-
-```bash
+在任意uni项目中
+```
 npm link @weiyi/mp-devtool-loader
 ```
 
-修改 vue-demo/vue.config.js
+## 配置vue.config.js
+按照README中的配置方式在uni项目中配置loader，额外需要注意的是，软链会造成一些路径解析问题，**需要配置[symlinks](https://webpack.js.org/configuration/resolve/#resolvesymlinks)**  
 
+vue.config.js
 ```javascript
-module.exports = {
-  // ...
-  chainWebpack: (config) => {
-    config.module
-      .rule("mp-devtool") // 链式操作用来分组的名字
-      .test(/\.(vue)|(js)$/)
-      .exclude.add(/node_modules/)
-      .end()
-      .use("@weiyi/mp-devtool-loader")
-      .loader("@weiyi/mp-devtool-loader")
-  },
-}
+chainWebpack: (config) => {
+  config.resolve.symlinks(false) // 解决软链问题
+  // 以下为常规配置
+  config.module
+    .rule('mp-devtool') // 链式操作用来分组的名字
+    .test(/\.(vue)|(js)$/)
+    .pre()
+    .exclude.add(/node_modules/)
+    .end()
+    .use('@weiyi/mp-devtool-loader')
+    .loader('@weiyi/mp-devtool-loader')
+    .options({
+      devtool: !isProd || ['记录仪开发版', '记录仪测试版'].includes(BUILD_TYPE) // 控制devtool只在非线上环境的注入，根据项目实际情况配置
+    })
+},
 ```
+## 调试wy-mp-devtool组件
+若只开发调试devtool组件，直接启动调试即可
 
-### 配置 vscode debug
+## debug loader
+
+### 在uni项目中配置 vscode debug
 
 ![vscode](https://qnm.hunliji.com/Fq9h9DtqNqPRw0PoXAPaZUvf_PVT?imageView2/1/w/200)
 
@@ -78,6 +80,3 @@ module.exports = {
 
 按f5即可启动调试。
 
-
-## 调试wy-mp-devtool组件
-在uni-app中手动引入开发，开发完覆盖src/DevTool中的文件

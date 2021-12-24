@@ -8,6 +8,8 @@
 
 
 ## 更新日志
+2021-12-24 v0.0.14
+- 支持注入任意自定义组件
 
 2021-12-20 v0.0.13
 - 支持支付宝小程序
@@ -33,7 +35,6 @@ npm i @weiyi/mp-devtool-loader --save-dev
 ### 2.修改vue.config.js
 > 注意区分环境，只在非正式环境注入
 
-
 ```javascript
 const { BUILD_TYPE = '' } = process.env
 
@@ -49,8 +50,8 @@ module.exports = {
       .loader('@weiyi/mp-devtool-loader')
       .options({
         components: [{
-          path: 'my-button/components/index.vue',
-          name: 'MyButton'
+          path: 'my-button/components/index.vue', // 组件路径，node_modules里的组件，或相对main.js的相对路径，如./components/my-button/index.vue
+          name: 'MyButton' // 组件名，驼峰形式
         }],
         devtool: !isProd || ['记录仪开发版', '记录仪测试版'].includes(BUILD_TYPE) // 注意区分环境，根据项目实际情况配置
       })
@@ -58,16 +59,39 @@ module.exports = {
 }
 ```
 
-该工具实际一个是 webpack 的 loader，uni-app 使用的 vue-cli，因此按照 vue-cli 配置 loader 的方式进行配置.[配置文档](https://cli.vuejs.org/zh/guide/webpack.html#%E9%93%BE%E5%BC%8F%E6%93%8D%E4%BD%9C-%E9%AB%98%E7%BA%A7).  
-其底层使用的是 webpack-chain 的包,vue-cli 对其描述不够全,可查看[webpack-chain 官方文档](https://github.com/Yatoo2018/webpack-chain/tree/zh-cmn-Hans)
+### 选项
+
+#### components
+要在每个页面注入的自定义组件
+```javascript
+{
+  components: [{
+      path: 'my-button/components/index.vue', // 组件路径，node_modules里的组件，或相对main.js的相对路径，如./components/my-button/index.vue
+      name: 'MyButton' // 组件名，驼峰形式
+    }]
+}
+```
+
+#### devtool
+是否注入调试工具，根据各小程序具体情况判断，只在非线上环境注入。
 
 
-配成完成后启动项目即可
+#### pagesJsonPath
+pages.json文件的绝对路径，以该文件里的配置判断是否为页面级vue，给其注入组件调用。默认为src/pages.json
 
+#### injectComponentRule
+pages.json不满足需求时，可以配置injectComponentRule，接收正则数组。
+## 工作原理
+在入口(默认为src/main.js)文件中引入要注入的组件并注册为全局组件，并进行一些初始化（重写wx.request等），根据项目pages.json，在编译时对每个**页面文件**中的template中插入组件的调用。
 
-### 工作原理
-在入口js文件中初始化（重写wx.request等），在全局注册wy-mp-devtool组件，根据page.json，在编译时对每个页面文件中的template文件中插入wy-mp-devtool组件的调用。
+### main.js
+```javascript
+// 插入
+import MyButton from 'my/button/index.vue' // 组件名和路径对应上面配置的name和path，所以是相对main.js的路径
+Vue.component('my-button', MyButton)
+```
 
+### 页面文件
 源文件
 ```vue
 <template>
@@ -92,11 +116,4 @@ module.exports = {
 </script>
 ```
 
-### 选项
-
-#### pagesJsonPath
-pages.json文件的绝对路径，以该文件里的配置判断是否为页面级vue，给其注入组件调用。默认为src/pages.json
-
-#### injectComponentRule
-pages.json不满足需求时，可以配置injectComponentRule，接收正则数组。
 
